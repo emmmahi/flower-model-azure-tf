@@ -1,0 +1,6 @@
+azure-storage-blob
+azure-storage-queue
+python-dotenv
+streamlit
+streamlit-drawable-canvas
+image_utils

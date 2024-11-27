@@ -1,0 +1,6 @@
+azure-identity
+azure-storage-blob
+azure-storage-queue
+streamlit-drawable-canvas
+scikit-learn
+requests
