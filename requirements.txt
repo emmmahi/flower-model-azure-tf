@@ -4,3 +4,5 @@ python-dotenv
 streamlit
 streamlit-drawable-canvas
 image_utils
+tensorflow
+keras

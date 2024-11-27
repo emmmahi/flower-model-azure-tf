@@ -4,7 +4,7 @@ import logging
 from azure.storage.blob import BlobServiceClient
 from azure.storage.queue import QueueServiceClient
 from azure.core.exceptions import ResourceExistsError
-from dotenv import load_dotenv
+
 #load_dotenv()
 # Decide if we're running in the cloud or locally
 CLOUD = os.environ.get("USE_AZURE_CREDENTIAL", "false").lower() == "true"
@@ -81,9 +81,10 @@ if __name__ == "__main__":
 
     # Upload following files to the storage container
     files = [
-        ("models/", "model_1713867925.joblib"),
-        ("datasets/", "dataset.csv"),
+        ("models/", "flowers_saved_HintsalaEmma.keras"),
+        ("images/", "after_02_script.png"),
     ]
+
 
     with get_blob_service_client() as blob_service_client:
         for prefix, file in files:

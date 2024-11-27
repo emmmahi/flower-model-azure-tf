@@ -30,21 +30,21 @@ resource "azurerm_storage_queue" "olearn" {
 
 # TODO: Upload the base model
 resource "azurerm_storage_blob" "model" {
-  name                   = "models/model_1713867925.joblib"
+  name                   = "models/flowers_saved_HintsalaEmma.keras"
   storage_account_name   = azurerm_storage_account.olearn.name
   storage_container_name = azurerm_storage_container.olearn.name
   type                   = "Block"
-  source                 = "../../../src/azurite_populate/model_1713867925.joblib"
+  source                 = "../../../src/azurite_populate/flowers_saved_HintsalaEmma.keras"
 }
 
 # TODO: Upload the base model
-resource "azurerm_storage_blob" "dataset" {
-  name                   = "datasets/dataset.csv"
-  storage_account_name   = azurerm_storage_account.olearn.name
-  storage_container_name = azurerm_storage_container.olearn.name
-  type                   = "Block"
-  source                 = "../../../src/azurite_populate/dataset.csv"
-}
+#resource "azurerm_storage_blob" "dataset" {
+#  name                   = "datasets/dataset.csv"
+#  storage_account_name   = azurerm_storage_account.olearn.name
+#  storage_container_name = azurerm_storage_container.olearn.name
+#  type                   = "Block"
+#  source                 = "../../../src/azurite_populate/dataset.csv"
+#}
 
 #ci = container instances
 resource "azurerm_container_group" "olearn" {

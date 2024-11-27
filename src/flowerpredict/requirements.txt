@@ -1,0 +1,11 @@
+azure-identity
+azure-storage-blob
+fastapi
+pydantic
+uvicorn
+joblib
+python-dotenv
+Pillow
+numpy
+scikit-learn
+tensorflow

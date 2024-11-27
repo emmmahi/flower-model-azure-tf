@@ -1,3 +1,10 @@
+## Tehtävän toteutus
+* sain toimimaan mallin populoinnin konttiin sekä front ja back konttien yhteyden
+* kuvadata ei vielä liiku, eikä malli lataudu onnistuneesti
+* nämä siis seuraavaksi kuntoon, kuvadatan lähetys frontista backkiin, backissa mallin lataus ja ennustuksen palautus 
+
+
+
 ## Online Learning
 
 Tavoitteena on luoda kukkadatalle tunnistusta tekevä nettisivu Azuren pilvipalveluun

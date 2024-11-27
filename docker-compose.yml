@@ -1,4 +1,4 @@
-name: ope-olearn
+name: emma-olearn
 
 services:
   # Azurite (Fake Azure Storage Service)
@@ -29,12 +29,12 @@ services:
     
   # Streamlit front-end
   front:
-    image: kamk/drawhello
+    image: kamk/flowerui
     env_file:
       - .env
-    hostname: drawhello
+    hostname: flowerui
     build:
-      context: ./src/drawhello
+      context: ./src/flowerui
       dockerfile: Dockerfile
     ports:
       - "8000:80"
@@ -43,6 +43,24 @@ services:
     depends_on:
       populate:
         condition: service_completed_successfully
+
+  # Streamlit front-end
+  back:
+    image: kamk/flowerpredict
+    env_file:
+      - .env
+    hostname: flowerpredict
+    build:
+      context: ./src/flowerpredict
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    networks:
+      - olearn
+    depends_on:
+      populate:
+        condition: service_completed_successfully
+
 
 networks:
   olearn:
