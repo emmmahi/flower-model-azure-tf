@@ -80,18 +80,21 @@ PREDICT_HELLO_URL
 
 http://localhost:8000
 
+````
 docker compose up -d
 docker ps
 docker compose logs -f
+````
 
 ## Terraformin alustus
-
+````
  mkdir -p infra/tf/container_registry
  cd infra/tf/container_registry/
  cp ~/code/3_vuosi/online-learning-course/ope-olearn/infra/tf/container_registry/*.tf .
 
 terraform init
 terraform apply
+````
 
 ![alt text](./images/azure_view.png)
 
