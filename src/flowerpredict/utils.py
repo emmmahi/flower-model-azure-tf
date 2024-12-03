@@ -60,15 +60,22 @@ def latest_model_version() -> int:
         return latest
 
 @lru_cache(maxsize=5)
-def load_model(version:int):
+def load_model():
     # Find the latest model from /models folder in the storage container
     # The model name follows the pattern model_{unix_seconds}.joblib
     with get_blob_service_client() as blob_service_client:
         container_client = blob_service_client.get_container_client(os.environ["STORAGE_CONTAINER"])
         blob_client = container_client.get_blob_client(f"models/flowers_saved_HintsalaEmma.keras")
-        logging.info(f"Loading model")
+        logging.info(f"Loading model from Azure Blob Storage")
 
-        with BytesIO() as data:
-            blob_client.download_blob().readinto(data)
-            return joblib.load(data)
+        model_data = BytesIO()
+        blob_client.download_blob().readinto(model_data)
+        model_data.seek(0)  # Ensure the pointer is at the start
+        return model_data
+
+
+
+        # with BytesIO() as data:
+        #     blob_client.download_blob().readinto(data)
+        #     return joblib.load(data)
 

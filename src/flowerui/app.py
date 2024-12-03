@@ -59,20 +59,24 @@ def call_predict_word(word) -> dict|None:
         st.write(response.text)
         return None
 
-def call_predict(image) -> dict|None:
-    # Convert the image to Base64
-    buffered = BytesIO()
-    image.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+def call_predict(image_file) -> dict|None:
+    try: 
+        files = {"image_file": (image_file.name, image_file, "image/jpeg")}
+        response = requests.post(URL, files=files)  #post imagefile to backend
 
-    # Send the Base64 image to the backend
-    response = requests.post(URL, json={"image": img_str})
-
+    except requests.exceptions.ConnectionError as e:
+        st.warning("Failed to connect to the backend.")
+        return None
+    
+    # Handle response
     if response.ok:
-        prediction = response.json()
-        st.write("Prediction:", prediction)
+        st.write("Prediction: ", response.json())
     else:
-        st.error("Error in prediction")
+        st.warning("Failed to get prediction from the backend.")
+        st.write(response.text)
+        return None
+    
+    return response.json()
 
 
 
@@ -82,7 +86,7 @@ if word_input:
     st.write("You entered:", word_input)
     prediction = call_predict_word(word_input)
 
-st.title("Flower Prediction")
+st.title("Flower Prediction NEW")
 
 image_file = st.file_uploader("Choose an image", type=['jpeg', 'jpg'])
 button = st.button("Predict")
@@ -92,7 +96,7 @@ if image_file is not None:
 
     if button:
         st.write("You pushed the button")
-        #prediction = call_predict(image_file)
+        prediction = call_predict(image_file)
         #predict_json = call_predict(word_1)
 
 

@@ -9,3 +9,4 @@ Pillow
 numpy
 scikit-learn
 tensorflow
+python-multipart
