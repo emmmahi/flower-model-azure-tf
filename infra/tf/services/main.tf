@@ -30,11 +30,11 @@ resource "azurerm_storage_queue" "olearn" {
 
 # TODO: Upload the base model
 resource "azurerm_storage_blob" "model" {
-  name                   = "models/flowers_saved_HintsalaEmma.keras"
+  name                   = "models/flowers-model_0.keras"
   storage_account_name   = azurerm_storage_account.olearn.name
   storage_container_name = azurerm_storage_container.olearn.name
   type                   = "Block"
-  source                 = "../../../src/azurite_populate/flowers_saved_HintsalaEmma.keras"
+  source                 = "../../../src/azurite_populate/flowers-model_0.keras"
 }
 
 # TODO: Upload the base model
