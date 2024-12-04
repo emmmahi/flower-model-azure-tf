@@ -7,6 +7,7 @@ from PIL import Image
 import numpy as np
 import tempfile
 import tensorflow as tf
+from tensorflow.keras.utils import load_img, img_to_array
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from datetime import datetime
@@ -26,7 +27,7 @@ def format_image(image):
 
 # Set the logging level for all azure-* libraries
 azure_logger = logging.getLogger('azure')
-azure_logger.setLevel(logging.WARNING)
+azure_logger.setLevel(logging.INFO)
 
 app = FastAPI()
 
@@ -41,8 +42,9 @@ def predict_flower(image_file:  UploadFile = File(...)):
     if image_file.content_type not in ("image/jpeg", "image/jpg"):
         raise HTTPException(status_code=400, detail="Only JPEG files are allowed")
         
-    # load .keras model
-    model_bytes = load_model() #return joblib.load(data)
+    # load .keras model (now just my first model, no  versioning)
+    model_bytes = load_model() #return model_data
+    model_bytes.seek(0)
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".keras") as temp_file:
         temp_file.write(model_bytes.read())
@@ -51,6 +53,34 @@ def predict_flower(image_file:  UploadFile = File(...)):
     model = tf.keras.models.load_model(temp_file_path)
     logging.info(f"Model succesfully loaded. Summary: {model.summary()}")
 
-    return {"messsage": "Model loaded successfully"}
+    # load image file
+    image_bytes = image_file.file.read()
+    #logging.info(image_bytes)
+    test_image = load_img(BytesIO(image_bytes))
+    test_image = img_to_array(test_image)  
+    test_image = format_image(test_image)
+
+    # predict image
+    output = model.predict(tf.expand_dims(test_image, axis=0), batch_size=1)
+    logging.info(f"Output: {output}")
+
+    # calculate prediction probability and select corresponding flower label
+    output = tf.nn.softmax(output)
+    logging.info(f"Output: {output}")
+    output_index = tf.argmax(output, axis=1)
+    #flower_list = ['roses', 'daisy', 'dandelion', 'sunflowers', 'tulips']
+    #flower_list = ['daisy', 'dandelion', 'roses', 'sunflowers', 'tulips']
+    flower_list = ['dandelion', 'daisy', 'tulips', 'sunflowers', 'roses']
+    prediction = flower_list[int(output_index)]
+    logging.info(f"Output: {output}")
+
+    return Prediction(
+        label=output_index,
+        confidence=float(output[0][int(output_index)]),
+        prediction=prediction,
+        version=0,
+        version_iso="abc"
+    )
+#{"messsage": "Model loaded successfully"}
 #   return {"imagefile name": image_file.name}
 

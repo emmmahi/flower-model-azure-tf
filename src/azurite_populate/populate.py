@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     # Upload following files to the storage container
     files = [
-        ("models/", "flowers_saved_HintsalaEmma.keras"),
+        ("models/", "flowers-model_0.keras"),
         ("images/", "after_02_script.png"),
     ]
 

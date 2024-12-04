@@ -65,7 +65,7 @@ def load_model():
     # The model name follows the pattern model_{unix_seconds}.joblib
     with get_blob_service_client() as blob_service_client:
         container_client = blob_service_client.get_container_client(os.environ["STORAGE_CONTAINER"])
-        blob_client = container_client.get_blob_client(f"models/flowers_saved_HintsalaEmma.keras")
+        blob_client = container_client.get_blob_client(f"models/flowers-model_0.keras")
         logging.info(f"Loading model from Azure Blob Storage")
 
         model_data = BytesIO()

@@ -5,6 +5,7 @@ import streamlit as st
 import numpy as np
 from io import BytesIO
 import base64
+import uuid
 
 from PIL import Image
 from azure.storage.queue import QueueServiceClient
@@ -89,15 +90,55 @@ if word_input:
 st.title("Flower Prediction NEW")
 
 image_file = st.file_uploader("Choose an image", type=['jpeg', 'jpg'])
-button = st.button("Predict")
+#button = st.button("Predict")
 
 if image_file is not None:
-    st.image(image_file)
 
-    if button:
+    # visualize the image
+    st.image(image_file, caption="Uploaded image.")
+
+    # predict the image button 
+    if st.button("Predict"):
         st.write("You pushed the button")
         prediction = call_predict(image_file)
-        #predict_json = call_predict(word_1)
+
+    st.write("Not happy? Submit photo for training.")
+
+    # submit image for training logic
+    flower_list = ['dandelion', 'daisy', 'tulips', 'sunflowers', 'roses']
+    label = st.selectbox("Label:", flower_list)
+    label_index = flower_list.index(label)
+
+    # Submit button
+    # if st.button("Submit for training"):
+    #     with get_queue_service_client() as queue_service_client:
+    #         with queue_service_client.get_queue_client(os.environ["STORAGE_QUEUE"]) as queue_client:
+    #             compressed_b64 = [image_file, label_index]
+    #             queue_client.send_message(compressed_b64)
+
+    #             logging.info(f"Message ({label}) as ({compressed_b64}) sent to Queue ({os.environ["STORAGE_QUEUE"]}")")
+    #             st.write(f"Sent: {compressed_b64} as {label_index}")
+
+ 
+
+# VERSIO MISSÄ KUVA MENEE JONOON DEKOODATTUNA, ei välttämättä ole toimiva versio
+    if st.button("Submit for training"):
+        # Read image data and encode it as Base64
+        image_data = image_file.read()  # Read image file
+        encoded_image = base64.b64encode(image_data).decode('utf-8')  # Encode to Base64
+
+        # Create a message payload
+        payload = {
+            "image_data": encoded_image,
+            "label": label,  # Label selected by the user
+        }
+
+        # Send the message to Azure Queue
+        with get_queue_service_client() as queue_service_client:
+            queue_client = queue_service_client.get_queue_client(os.environ["STORAGE_QUEUE"])
+            queue_client.send_message(base64.b64encode(str(payload).encode("utf-8")).decode("utf-8"))
+
+        st.write(f"Image and label sent to the queue.")
 
 
 
