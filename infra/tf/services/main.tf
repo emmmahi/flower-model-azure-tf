@@ -37,14 +37,14 @@ resource "azurerm_storage_blob" "model" {
   source                 = "../../../src/azurite_populate/flowers-model_0.keras"
 }
 
-# TODO: Upload the base model
-#resource "azurerm_storage_blob" "dataset" {
-#  name                   = "datasets/dataset.csv"
-#  storage_account_name   = azurerm_storage_account.olearn.name
-#  storage_container_name = azurerm_storage_container.olearn.name
-#  type                   = "Block"
-#  source                 = "../../../src/azurite_populate/dataset.csv"
-#}
+# TODO: Upload the validation data
+resource "azurerm_storage_blob" "val_dataset" {
+ name                   = "datasets/val_data.zip"
+ storage_account_name   = azurerm_storage_account.olearn.name
+ storage_container_name = azurerm_storage_container.olearn.name
+ type                   = "Block"
+ source                 = "../../../src/azurite_populate/datasets/val_data.zip"
+}
 
 #ci = container instances
 resource "azurerm_container_group" "olearn" {
@@ -58,14 +58,14 @@ resource "azurerm_container_group" "olearn" {
   sku                         = "Standard"
   dns_name_label_reuse_policy = "ResourceGroupReuse"
 
-  depends_on = [azurerm_storage_blob.dataset, azurerm_storage_blob.model]
+  depends_on = [azurerm_storage_blob.val_dataset, azurerm_storage_blob.model]
 
   identity {
     type = "SystemAssigned"
   }
 
   container {
-    name   = "drawhello"
+    name   = "flowerui"
     image  = var.frontend_image
     cpu    = "1.0"
     memory = "1.0"
@@ -81,7 +81,7 @@ resource "azurerm_container_group" "olearn" {
       STORAGE_QUEUE_URL    = azurerm_storage_account.olearn.primary_queue_endpoint
       STORAGE_CONTAINER    = azurerm_storage_container.olearn.name
       STORAGE_QUEUE        = azurerm_storage_queue.olearn.name
-      PREDICT_HELLO_URL    = "http://localhost:8888/predict"
+      PREDICT_FLOWER_URL    = "http://localhost:8888/predict"
     }
 
     # This is only needed if NOT using DefaultAzureCredential (SystemAssigned Identity)
@@ -91,7 +91,7 @@ resource "azurerm_container_group" "olearn" {
   }
 
   container {
-    name   = "predicthello"
+    name   = "flowerpredict"
     image  = var.backend_image
     cpu    = "1.0"
     memory = "1.0"
@@ -116,26 +116,26 @@ resource "azurerm_container_group" "olearn" {
   }
 
 
-  container {
-    name   = "modeller"
-    image  = var.modeller_image
-    cpu    = "1.0"
-    memory = "1.0"
+  # container {
+  #   name   = "modeller"
+  #   image  = var.modeller_image
+  #   cpu    = "1.0"
+  #   memory = "1.0"
 
-    environment_variables = {
-      USE_AZURE_CREDENTIAL = var.use_azure_credential
-      STORAGE_ACCOUNT_NAME = azurerm_storage_account.olearn.name
-      STORAGE_BLOB_URL     = azurerm_storage_account.olearn.primary_blob_endpoint
-      STORAGE_QUEUE_URL    = azurerm_storage_account.olearn.primary_queue_endpoint
-      STORAGE_CONTAINER    = azurerm_storage_container.olearn.name
-      STORAGE_QUEUE        = azurerm_storage_queue.olearn.name
-    }
+  #   environment_variables = {
+  #     USE_AZURE_CREDENTIAL = var.use_azure_credential
+  #     STORAGE_ACCOUNT_NAME = azurerm_storage_account.olearn.name
+  #     STORAGE_BLOB_URL     = azurerm_storage_account.olearn.primary_blob_endpoint
+  #     STORAGE_QUEUE_URL    = azurerm_storage_account.olearn.primary_queue_endpoint
+  #     STORAGE_CONTAINER    = azurerm_storage_container.olearn.name
+  #     STORAGE_QUEUE        = azurerm_storage_queue.olearn.name
+  #   }
 
-    # This is only needed if NOT using DefaultAzureCredential (SystemAssigned Identity)
-    secure_environment_variables = {
-      STORAGE_CONNECTION_STRING = var.use_azure_credential ? "" : azurerm_storage_account.olearn.primary_connection_string
-    }
-  }
+  #   # This is only needed if NOT using DefaultAzureCredential (SystemAssigned Identity)
+  #   secure_environment_variables = {
+  #     STORAGE_CONNECTION_STRING = var.use_azure_credential ? "" : azurerm_storage_account.olearn.primary_connection_string
+  #   }
+  # }
 
   tags = var.default_tags
 }
