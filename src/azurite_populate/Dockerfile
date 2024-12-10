@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 # Copy the local code to the container image
 COPY populate.py .
 
-COPY flowers-model_0.keras after_02_script.png ./ 
+COPY model_0.keras datasets/val_data.zip ./ 
 #dataset.csv
 
 # Run the Python script

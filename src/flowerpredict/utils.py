@@ -52,20 +52,20 @@ def latest_model_version() -> int:
     with get_blob_service_client() as blob_service_client:
         container_client = blob_service_client.get_container_client(os.environ["STORAGE_CONTAINER"])
         blobs = container_client.list_blobs(name_starts_with="models/")
-        latest = "flowers_saved_HintsalaEmma.keras"
-        #latest = max([int(x.name.split("_")[1].split(".")[0]) for x in blobs])
+        latest = max([int(x.name.split("_")[1].split(".")[0]) for x in blobs])
 
-        #unix_to_iso = datetime.fromtimestamp(latest).isoformat()
-        #logging.info(f"latest_model_version() seeing: {latest} created at {unix_to_iso}")
+        unix_to_iso = datetime.fromtimestamp(latest).isoformat()
+        logging.info(f"latest_model_version() seeing: {latest} created at {unix_to_iso}")
         return latest
 
 @lru_cache(maxsize=5)
-def load_model():
+def load_model(latest_version):
     # Find the latest model from /models folder in the storage container
     # The model name follows the pattern model_{unix_seconds}.joblib
     with get_blob_service_client() as blob_service_client:
         container_client = blob_service_client.get_container_client(os.environ["STORAGE_CONTAINER"])
-        blob_client = container_client.get_blob_client(f"models/flowers-model_0.keras")
+        #blob_client = container_client.get_blob_client(f"models/flowers-model_0.keras")
+        blob_client = container_client.get_blob_client(f"models/model_{latest_version}.keras")
         logging.info(f"Loading model from Azure Blob Storage")
 
         model_data = BytesIO()

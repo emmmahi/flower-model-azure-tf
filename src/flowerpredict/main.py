@@ -41,9 +41,11 @@ def predict_flower(image_file:  UploadFile = File(...)):
     # Check the MIME type
     if image_file.content_type not in ("image/jpeg", "image/jpg"):
         raise HTTPException(status_code=400, detail="Only JPEG files are allowed")
-        
+    
+    latest_version = latest_model_version()
+    logging.info(f"Latest version: {latest_version}")
     # load .keras model (now just my first model, no  versioning)
-    model_bytes = load_model() #return model_data
+    model_bytes = load_model(latest_version) #return model_data
     model_bytes.seek(0)
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".keras") as temp_file:
@@ -79,7 +81,7 @@ def predict_flower(image_file:  UploadFile = File(...)):
         confidence=float(output[0][int(output_index)]),
         prediction=prediction,
         version=0,
-        version_iso="abc"
+        version_iso=datetime.fromtimestamp(latest_version).isoformat()
     )
 #{"messsage": "Model loaded successfully"}
 #   return {"imagefile name": image_file.name}

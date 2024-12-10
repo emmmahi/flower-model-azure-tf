@@ -34,7 +34,7 @@ resource "azurerm_storage_blob" "model" {
   storage_account_name   = azurerm_storage_account.olearn.name
   storage_container_name = azurerm_storage_container.olearn.name
   type                   = "Block"
-  source                 = "../../../src/azurite_populate/flowers-model_0.keras"
+  source                 = "../../../src/azurite_populate/model_0.keras"
 }
 
 # TODO: Upload the validation data

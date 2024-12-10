@@ -149,3 +149,14 @@ variable "frontend_image" {
     * st-emma-olearn -> "kansiot" models ja datasets
 * luo azure container group
     * ci-emma-olearn
+
+
+
+## Mitä yritin tehdä
+
+1. eka terraform apply container_registryssä
+2. scritpien ajo, imaget konttirekisteriin (ui ja predict)
+3. yritys terraform apply servuces puolella error: 
+![alt text](image.png)
+    * tarvittavat muutokset: mallin nimi ja datasetti oikein, jotka menossa blob storageen
+    *  muuta environment variables tarvittaessa
