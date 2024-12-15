@@ -24,8 +24,8 @@ docker ps
 docker compose logs -f
 ````
 
-## Azure Blob Storage
-*Azure Blob Storage on Microsoft Azure -pilvipalvelun tarjoama skaalautuva, kustannustehokas ja turvallinen palvelu, joka on suunniteltu erityisesti suurten tietomäärien tallentamiseen ja hallintaan. "Blob" on lyhenne sanoista Binary Large Object, ja se viittaa suuriin tiedostoihin tai binääritietoihin, kuten asiakirjoihin, kuviin, videoihin tai varmuuskopioihin.* 
+Käyttöliittymä löytyy localhost:8000
+
 
 
 
@@ -33,7 +33,7 @@ docker compose logs -f
 
 ## Terraform & Azure
 
-* Container Registryn pystytys: 
+1. Container Registryn pystytys: 
 
 ````
 cd infta/tf/container_registry
@@ -43,7 +43,7 @@ terraform apply
 ![alt text](./images/azure_view.png)
 
 
-* Imaget konttirekisteriin:
+2. Imaget konttirekisteriin:
 ````
 cd scripts/
 ./01_acr_login.sh # kirjaudu konttirekisteriin
@@ -52,7 +52,7 @@ cd scripts/
 ./02_build_n_release modeller 1.0
 ````
 
-* Palveluiden pystytys Azureen
+3. Palveluiden pystytys Azureen
 
 ````
 cd infra/tf/services
@@ -71,7 +71,7 @@ terraform apply
 4. palvelun luonti, oma terraform apply siellä. main ja variables osioihin niiden konttien lisäys, mitkä on scriptillä viety konttirekisteriin. 
 
 **tf/container_registry**
-* luo Azure recource groupin ja azure conatiner registryn
+* luo Azure recource groupin ja azure container registryn
     * rg-emma-olearn-acr
     * cremmaolearn
         * = "cr${var.identifier}${var.course_short_name}"
@@ -89,3 +89,6 @@ terraform apply
     * st-emma-olearn -> "kansiot" models ja datasets
 * luo azure container group
     * ci-emma-olearn
+
+## Azure Blob Storage
+*Azure Blob Storage on Microsoft Azure -pilvipalvelun tarjoama skaalautuva, kustannustehokas ja turvallinen palvelu, joka on suunniteltu erityisesti suurten tietomäärien tallentamiseen ja hallintaan. "Blob" on lyhenne sanoista Binary Large Object, ja se viittaa suuriin tiedostoihin tai binääritietoihin, kuten asiakirjoihin, kuviin, videoihin tai varmuuskopioihin.* 

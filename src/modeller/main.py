@@ -42,7 +42,7 @@ os.rename('./val/roses', './val/4_roses')
 
 while True:
     n_images = n_images_waiting()
-    if n_images > 1:
+    if n_images > 5:
 
         # 1. Load .keras model
         latest_version = latest_model_version()
