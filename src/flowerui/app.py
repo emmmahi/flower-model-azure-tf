@@ -56,22 +56,22 @@ def get_blob_service_client():
 
 URL = os.environ["PREDICT_FLOWER_URL"]
 
-def call_predict_word(word) -> dict|None:
-    try:
-        # Lähetetään JSON-muotoinen data POST-pyynnössä
-        response = requests.post(URL, json={"word": word})
-    except requests.exceptions.ConnectionError as e:
-        st.warning("Failed to connect to the backend.")
-        return None
+# def call_predict_word(word) -> dict|None:
+#     try:
+#         # Lähetetään JSON-muotoinen data POST-pyynnössä
+#         response = requests.post(URL, json={"word": word})
+#     except requests.exceptions.ConnectionError as e:
+#         st.warning("Failed to connect to the backend.")
+#         return None
 
-    # Käsitellään vastaus
-    if response.ok:
-        st.write("Prediction: ", response.json())
-        return response.json()
-    else:
-        st.warning("Failed to get prediction from the backend.")
-        st.write(response.text)
-        return None
+#     # Käsitellään vastaus
+#     if response.ok:
+#         st.write("Prediction: ", response.json())
+#         return response.json()
+#     else:
+#         st.warning("Failed to get prediction from the backend.")
+#         st.write(response.text)
+#         return None
 
 def call_predict(image_file) -> dict|None:
     try: 
@@ -94,13 +94,13 @@ def call_predict(image_file) -> dict|None:
 
 
 
-word_input = st.text_input("Enter a word", "")
+# word_input = st.text_input("Enter a word", "")
 
-if word_input:
-    st.write("You entered:", word_input)
-    prediction = call_predict_word(word_input)
+# if word_input:
+#     st.write("You entered:", word_input)
+#     prediction = call_predict_word(word_input)
 
-st.title("Flower Prediction NEW")
+st.title("Flower Prediction")
 
 image_file = st.file_uploader("Choose an image", type=['jpeg', 'jpg'])
 #button = st.button("Predict")

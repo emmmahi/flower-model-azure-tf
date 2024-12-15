@@ -31,22 +31,22 @@ variable "default_tags" {
 
 variable "frontend_image" {
   type        = string
-  description = "The image to use for the frontend container (The Draw Hello Streamlit UI)."
+  description = "The image to use for the frontend container (The Flower Predict Streamlit UI)."
   default     = "cremmaolearn.azurecr.io/flowerui:1.0"
 }
 
  variable "backend_image" {
    type        = string
-   description = "The image to use for the backend container (The Predict Hello Fast API)"
+   description = "The image to use for the backend container (The Predict Flower Fast API)"
    default     = "cremmaolearn.azurecr.io/flowerpredict:1.0"
 
  }
 
-#  variable "modeller_image" {
-#    type        = string
-#    description = "The image to use for the modeller container (The Scikit Learn Modeller)"
-#    default     = "cremmaolearn.azurecr.io/modeller:1.0"
-#  }
+ variable "modeller_image" {
+   type        = string
+   description = "The image to use for the modeller container (Modeller)"
+   default     = "cremmaolearn.azurecr.io/modeller:1.0"
+ }
 
 variable "use_azure_credential" {
   type    = bool

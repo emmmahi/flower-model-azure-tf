@@ -67,7 +67,7 @@ resource "azurerm_container_group" "olearn" {
   container {
     name   = "flowerui"
     image  = var.frontend_image
-    cpu    = "1.0"
+    cpu    = "0.5"
     memory = "1.0"
     ports {
       port     = 80
@@ -93,7 +93,7 @@ resource "azurerm_container_group" "olearn" {
   container {
     name   = "flowerpredict"
     image  = var.backend_image
-    cpu    = "1.0"
+    cpu    = "0.5"
     memory = "1.0"
     ports {
       port     = 8888
@@ -116,26 +116,26 @@ resource "azurerm_container_group" "olearn" {
   }
 
 
-  # container {
-  #   name   = "modeller"
-  #   image  = var.modeller_image
-  #   cpu    = "1.0"
-  #   memory = "1.0"
+  container {
+    name   = "modeller"
+    image  = var.modeller_image
+    cpu    = "3.0"
+    memory = "8.0"
 
-  #   environment_variables = {
-  #     USE_AZURE_CREDENTIAL = var.use_azure_credential
-  #     STORAGE_ACCOUNT_NAME = azurerm_storage_account.olearn.name
-  #     STORAGE_BLOB_URL     = azurerm_storage_account.olearn.primary_blob_endpoint
-  #     STORAGE_QUEUE_URL    = azurerm_storage_account.olearn.primary_queue_endpoint
-  #     STORAGE_CONTAINER    = azurerm_storage_container.olearn.name
-  #     STORAGE_QUEUE        = azurerm_storage_queue.olearn.name
-  #   }
+    environment_variables = {
+      USE_AZURE_CREDENTIAL = var.use_azure_credential
+      STORAGE_ACCOUNT_NAME = azurerm_storage_account.olearn.name
+      STORAGE_BLOB_URL     = azurerm_storage_account.olearn.primary_blob_endpoint
+      STORAGE_QUEUE_URL    = azurerm_storage_account.olearn.primary_queue_endpoint
+      STORAGE_CONTAINER    = azurerm_storage_container.olearn.name
+      STORAGE_QUEUE        = azurerm_storage_queue.olearn.name
+    }
 
-  #   # This is only needed if NOT using DefaultAzureCredential (SystemAssigned Identity)
-  #   secure_environment_variables = {
-  #     STORAGE_CONNECTION_STRING = var.use_azure_credential ? "" : azurerm_storage_account.olearn.primary_connection_string
-  #   }
-  # }
+    # This is only needed if NOT using DefaultAzureCredential (SystemAssigned Identity)
+    secure_environment_variables = {
+      STORAGE_CONNECTION_STRING = var.use_azure_credential ? "" : azurerm_storage_account.olearn.primary_connection_string
+    }
+  }
 
   tags = var.default_tags
 }
