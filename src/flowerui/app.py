@@ -2,14 +2,15 @@ import requests
 import os
 import logging
 import streamlit as st
-import numpy as np
+#import numpy as np
 from io import BytesIO
-import base64
+#import base64
 import uuid
+import json
 
-from PIL import Image
+#from PIL import Image
 from azure.storage.queue import QueueServiceClient
-
+from azure.storage.blob import BlobServiceClient  
 
 #from pydantic import BaseModel
 
@@ -38,7 +39,19 @@ def get_queue_service_client():
         return QueueServiceClient(account_url=account_url, credential=credential)
     else:
         return QueueServiceClient.from_connection_string(os.environ["STORAGE_CONNECTION_STRING"])
-
+    
+def get_blob_service_client():
+    """
+    The STORAGE_CONNECTION_STRING is only set up when running in the cloud. 
+    If it's not set, we're running locally with Azurite.
+    """
+    if CLOUD:
+        from azure.identity import DefaultAzureCredential # type: ignore
+        credential = DefaultAzureCredential()
+        account_url = os.environ["STORAGE_BLOB_URL"]
+        return BlobServiceClient(account_url=account_url, credential=credential)
+    else:
+        return BlobServiceClient.from_connection_string(os.environ["STORAGE_CONNECTION_STRING"])
 
 
 URL = os.environ["PREDICT_FLOWER_URL"]
@@ -121,27 +134,58 @@ if image_file is not None:
 
  
 
-# VERSIO MISSÄ KUVA MENEE JONOON DEKOODATTUNA, ei välttämättä ole toimiva versio
+# # VERSIO MISSÄ KUVA MENEE JONOON DEKOODATTUNA, ei välttämättä ole toimiva versio
+#     if st.button("Submit for training"):
+#         # Read image data and encode it as Base64
+#         image_data = image_file.read()  # Read image file
+#         encoded_image = base64.b64encode(image_data).decode('utf-8')  # Encode to Base64
+
+#         # Create a message payload
+#         payload = {
+#             "image_data": 1234,
+#             "label": label,  # Label selected by the user
+#         }
+
+#         # Send the message to Azure Queue
+#         with get_queue_service_client() as queue_service_client:
+#             queue_client = queue_service_client.get_queue_client(os.environ["STORAGE_QUEUE"])
+#             #queue_client.send_message(base64.b64encode(str(payload).encode("utf-8")).decode("utf-8"))
+#             queue_client.send_message(payload)
+
+#         st.write(f"Image and label sent to the queue.")
+
+
     if st.button("Submit for training"):
-        # Read image data and encode it as Base64
-        image_data = image_file.read()  # Read image file
-        encoded_image = base64.b64encode(image_data).decode('utf-8')  # Encode to Base64
 
-        # Create a message payload
-        payload = {
-            "image_data": encoded_image,
-            "label": label,  # Label selected by the user
-        }
+        # Upload the image to Azure Blob Storage
+        with get_blob_service_client() as blob_service_client:
+            #Generate unique filename
+            blob_name = f"{uuid.uuid4()}_{image_file.name}"
 
-        # Send the message to Azure Queue
+            #Get the container and blob clients
+            container_client = blob_service_client.get_container_client(os.environ["STORAGE_CONTAINER"])
+            blob_client = container_client.get_blob_client(blob_name)
+
+            # Upload file to Azure Blob Storage
+            with BytesIO(image_file.getvalue()) as uploaded_file:
+                blob_client.upload_blob(uploaded_file.read(), overwrite=True)
+
+            print(f"File {blob_name} loaded to blob storage.")
+        
+        # Send image name and label to the queue as json structure
         with get_queue_service_client() as queue_service_client:
-            queue_client = queue_service_client.get_queue_client(os.environ["STORAGE_QUEUE"])
-            queue_client.send_message(base64.b64encode(str(payload).encode("utf-8")).decode("utf-8"))
 
-        st.write(f"Image and label sent to the queue.")
+            with queue_service_client.get_queue_client(os.environ["STORAGE_QUEUE"]) as queue_client:
 
+                # Construct the queue message with blob URL and label
+                message = {
+                    "blob_name": blob_name,
+                    "label": label_index
+                    }
+                queue_client.send_message(json.dumps(message))
 
-
+                logging.info(f"Message ({blob_name}) and {label_index} sent to Queue ({os.environ['STORAGE_QUEUE']})")
+                st.write(f"Sent: {blob_name} and {label_index}")
 
 
 

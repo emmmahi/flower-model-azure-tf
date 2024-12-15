@@ -44,7 +44,7 @@ services:
       populate:
         condition: service_completed_successfully
 
-  # Streamlit front-end
+  # Backend
   back:
     image: kamk/flowerpredict
     env_file:
@@ -55,6 +55,21 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8888:8888"
+    networks:
+      - olearn
+    depends_on:
+      populate:
+        condition: service_completed_successfully
+
+  # ML Model service
+  modeller:
+    image: kamk/modeller
+    env_file:
+      - .env
+    hostname: modeller
+    build:
+      context: ./src/modeller
+      dockerfile: Dockerfile
     networks:
       - olearn
     depends_on:

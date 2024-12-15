@@ -68,10 +68,19 @@ def load_model(latest_version):
         blob_client = container_client.get_blob_client(f"models/model_{latest_version}.keras")
         logging.info(f"Loading model from Azure Blob Storage")
 
-        model_data = BytesIO()
-        blob_client.download_blob().readinto(model_data)
-        model_data.seek(0)  # Ensure the pointer is at the start
-        return model_data
+        blob_data = blob_client.download_blob()
+        file_bytes = blob_data.readall()
+        logging.info(f"Dowload model size: {len(file_bytes)} bytes")
+
+        return file_bytes
+
+        # model_data = BytesIO()
+        # logging.info(f"Onnistui model_data = BytesIO()")
+        # blob_client.download_blob().readinto(model_data)
+        # logging.info(f"blob_client.download_blob().readinto(model_data)")
+        # model_data.seek(0)  # Ensure the pointer is at the start
+        # logging.info(f"model_data.seek(0)")
+        # return model_data
 
 
 

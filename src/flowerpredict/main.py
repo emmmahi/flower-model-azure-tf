@@ -44,13 +44,21 @@ def predict_flower(image_file:  UploadFile = File(...)):
     
     latest_version = latest_model_version()
     logging.info(f"Latest version: {latest_version}")
+
+    # Additional checks before loading model
+    logging.info(f"Current working directory: {os.getcwd()}")
+    logging.info(f"Temporary directory: {tempfile.gettempdir()}")
+
     # load .keras model (now just my first model, no  versioning)
     model_bytes = load_model(latest_version) #return model_data
     model_bytes.seek(0)
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".keras") as temp_file:
+    with tempfile.NamedTemporaryFile(mode='wb', delete=False, suffix=".keras") as temp_file:
         temp_file.write(model_bytes.read())
         temp_file_path  = temp_file.name
+
+    logging.info(f"Temporary file created at: {temp_file_path}")
+    logging.info(f"Temporary file exists: {os.path.exists(temp_file_path)}")
 
     model = tf.keras.models.load_model(temp_file_path)
     logging.info(f"Model succesfully loaded. Summary: {model.summary()}")
@@ -70,8 +78,6 @@ def predict_flower(image_file:  UploadFile = File(...)):
     output = tf.nn.softmax(output)
     logging.info(f"Output: {output}")
     output_index = tf.argmax(output, axis=1)
-    #flower_list = ['roses', 'daisy', 'dandelion', 'sunflowers', 'tulips']
-    #flower_list = ['daisy', 'dandelion', 'roses', 'sunflowers', 'tulips']
     flower_list = ['dandelion', 'daisy', 'tulips', 'sunflowers', 'roses']
     prediction = flower_list[int(output_index)]
     logging.info(f"Output: {output}")
