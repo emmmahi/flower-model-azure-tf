@@ -69,7 +69,9 @@ def load_model(latest_version):
         logging.info(f"Loading model from Azure Blob Storage")
 
         blob_data = blob_client.download_blob()
+        logging.info(f"Onnistui: blob_data = blob_client.download_blob()")
         file_bytes = blob_data.readall()
+        logging.info(f"Onnistui: file_bytes = blob_data.readall()")
         logging.info(f"Dowload model size: {len(file_bytes)} bytes")
 
         return file_bytes

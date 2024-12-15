@@ -36,7 +36,7 @@ app = FastAPI()
 #     return {"response": f"You gave word {word_data.word}"}
 
 @app.post("/predict")
-def predict_flower(image_file:  UploadFile = File(...)):
+def predict_flower(image_file:  UploadFile = File(...)) -> Prediction:
         
     # Check the MIME type
     if image_file.content_type not in ("image/jpeg", "image/jpg"):
@@ -49,13 +49,13 @@ def predict_flower(image_file:  UploadFile = File(...)):
     logging.info(f"Current working directory: {os.getcwd()}")
     logging.info(f"Temporary directory: {tempfile.gettempdir()}")
 
-    # load .keras model (now just my first model, no  versioning)
-    model_bytes = load_model(latest_version) #return model_data
-    model_bytes.seek(0)
 
-    with tempfile.NamedTemporaryFile(mode='wb', delete=False, suffix=".keras") as temp_file:
-        temp_file.write(model_bytes.read())
-        temp_file_path  = temp_file.name
+    model_bytes = load_model(latest_version) #return model_data
+    #model_bytes.seek(0)
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".keras") as temp_file:
+        temp_file.write(model_bytes)
+        temp_file_path = temp_file.name
 
     logging.info(f"Temporary file created at: {temp_file_path}")
     logging.info(f"Temporary file exists: {os.path.exists(temp_file_path)}")
@@ -86,7 +86,7 @@ def predict_flower(image_file:  UploadFile = File(...)):
         label=output_index,
         confidence=float(output[0][int(output_index)]),
         prediction=prediction,
-        version=0,
+        version=latest_version,
         version_iso=datetime.fromtimestamp(latest_version).isoformat()
     )
 #{"messsage": "Model loaded successfully"}

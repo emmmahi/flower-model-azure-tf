@@ -156,15 +156,18 @@ def get_all_from_queue():
 
 
 
-def upload(temp_model, model_file_path):
-    """Append the new data to the dataset.
+def upload(model_file, file_path):
+    """Append new model to models.
     """
-    logging.info(f"Uploading {type(temp_model)} to {model_file_path}.")
+    logging.info(f"Uploading model to storage container.")
+    logging.info(f"model_file: {model_file}")
+    logging.info(f"file_path: {file_path}")
     with get_blob_service_client() as blob_service_client:
         container_client = blob_service_client.get_container_client(os.environ["STORAGE_CONTAINER"])
-        blob_client = container_client.get_blob_client(model_file_path)
-        blob_client.upload_blob(temp_model, overwrite=True)
-        logging.info(f"Upload complete for {model_file_path}.")
+        with open(model_file, "rb") as data:
+            blob_client = container_client.get_blob_client(file_path)
+            blob_client.upload_blob(data, overwrite=True)
+            logging.info(f"Upload complete for {model_file}.")
 
 # def images_to_csv(images: list[tuple[Image.Image, int]]) -> str:
 #     """Convert a list of images to a CSV string.
