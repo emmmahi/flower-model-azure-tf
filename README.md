@@ -3,19 +3,27 @@
 
 Tavoitteena on luoda kukkadatalle tunnistusta tekevä nettisivu Azuren pilvipalveluun.
 
+Arkkitehtuurikuva Azuren palveluista:
+
 ![alt text](./images/azure_arkkitehtuuri.png)
 
-Azure CLI ja terraform tarvitaan
+Azure CLI ja terraform tarvitaan!
 
 ````
-az login
+az login  #kirjautuminen azureen terminaalissa
 
-az account show
+az account show #tilin tiedot
 ````
 
 ## Käyttö dockerissa 
 
-**docker-compose.yml** -> pitää ajaa ylös ennen scripiten ajoa, koska luo kontit niitä varten!
+**docker-compose.yml** 
+Luo kontit:
+* azurite  (emuloi Azure Blob Storagea ja Azure Queue Storagea paikallisessa ympäristössä.)
+* populate  (lisää mallin ja data Blob Storageen)
+* front  (streamlit käyttöliittymä localhost:8000)
+* back   (ennustusta tekevä backend, fastapi dokumentaatio localhost:8888/docs)
+* modeller (uudelleenkouluttaa mallin kun kuvia on tarpeeksi jonossa)
 
 
 ````
@@ -24,14 +32,10 @@ docker ps
 docker compose logs -f
 ````
 
-Käyttöliittymä löytyy localhost:8000
+**Käyttöliittymä löytyy osoitteesta localhost:8000** 
 
 
-
-
-
-
-## Terraform & Azure
+## Terraformin avulla palveluiden pystytys Azureen
 
 1. Container Registryn pystytys: 
 
@@ -40,6 +44,13 @@ cd infta/tf/container_registry
 terraform init
 terraform apply
 ````
+
+**tf/container_registry**
+* luo Azure recource groupin ja azure container registryn
+    * rg-emma-olearn-acr
+    * cremmaolearn
+        * = "cr${var.identifier}${var.course_short_name}"
+
 ![alt text](./images/azure_view.png)
 
 
@@ -47,9 +58,9 @@ terraform apply
 ````
 cd scripts/
 ./01_acr_login.sh # kirjaudu konttirekisteriin
-./02_build_n_release flowerui 1.0  #vie image ja versio
-./02_build_n_release flowerpredict 1.0
-./02_build_n_release modeller 1.0
+./02_build_n_release.sh flowerui 1.0  #vie image ja versio
+./02_build_n_release.sh flowerpredict 1.0
+./02_build_n_release.sh modeller 1.0
 ````
 
 3. Palveluiden pystytys Azureen
@@ -60,34 +71,18 @@ terraform init
 terraform apply
 ````
 
-
-
-
-### MITÄ TEIN
-
-1. virtuaaliympäristön luominen. testailin paikallisesti emulaattorin avulla testausta, että saan mallin ja datasetin oikeaan paikkaan ja jonoon lisäyksen toimimaan (docker compose azurite ja populate, src/azurire**)
-2. drawhello lisäys src:een, docker composeen lisäys ja ui:n käyttö onnistui paikallisesti
-3. terraform alustus, infra/tf/container registry konttirekisterä varten, minne voi scripteillä viedä imageja src:n alta
-4. palvelun luonti, oma terraform apply siellä. main ja variables osioihin niiden konttien lisäys, mitkä on scriptillä viety konttirekisteriin. 
-
-**tf/container_registry**
-* luo Azure recource groupin ja azure container registryn
-    * rg-emma-olearn-acr
-    * cremmaolearn
-        * = "cr${var.identifier}${var.course_short_name}"
-
-**tf/services**
-* luo azure recourge group
+**cd infra/tf/services/main.tf**
+* luo azure recourge group (resurssiryhmä)
     * rg-emma-olearn
-* luo storage account
+* luo storage account (Azure Storage tili)
     * saemmaolearn
-* luo storage container
+* luo storage container (Säiliö tiedostojen tallennusta varten)
     * st-emma-olearn
-* luo storage queue
+* luo storage queue  (Viestijono)
     * sq-emma-olearn
-* luo storage containeriin blobit tiedostoja varten (data ja mallit)
+* luo storage containeriin blobit tallennettavia tiedostoja varten (data ja mallit) (tallentaa tiedot säiliöön)
     * st-emma-olearn -> "kansiot" models ja datasets
-* luo azure container group
+* luo azure container group (konttiryhmä, `docker pull` komennot otettu konttirekisterin imageista)
     * ci-emma-olearn
 
 ## Azure Blob Storage
