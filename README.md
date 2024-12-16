@@ -3,7 +3,7 @@
 
 Tavoitteena on luoda kukkadatalle tunnistusta tekevä nettisivu Azuren pilvipalveluun.
 
-Arkkitehtuurikuva Azuren palveluista:
+Arkkitehtuurikuva Azuren  (kuvasta poiketen uudelleen koulutus käynnistyy kun kuvia on yli 5 kappaletta jonossa):
 
 ![alt text](./images/azure_arkkitehtuuri.png)
 
