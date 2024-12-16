@@ -37,6 +37,91 @@ docker compose logs -f
 
 ## Terraformin avulla palveluiden pystytys Azureen
 
+<details>
+<summary>Valmistelut</summary>
+
+
+# Valmistelut
+
+Tarvitset tässäseuraavat asiat:
+
+* [Git](https://git-scm.com/downloads) asennettuna
+* [Visual Studio Code](https://code.visualstudio.com/) asennettuna
+* [Terraform](https://www.terraform.io/downloads.html) asennettuna
+* [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) asennettuna
+* [Azure-tili](https://azure.microsoft.com/en-us/free/) ja [Azure-tilauksen](https://azure.microsoft.com/en-us/free/) luotuna
+* [HashiCorp Terraform](https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform) -lisäosa Visual Studio Codeen
+
+Asenna paketit (terraform ja azure cli) käyttäen paketinhallintaa.
+
+## Mikä on paketinhallinta?
+
+Paketinhallintaan on useita vaihtoehtoja:
+
+* Windows:
+    * [Scoop](https://scoop.sh/)
+    * [Chocolate](https://chocolatey.org/)
+    * Winget (Windows Package Manager, built-in)
+* MacOS:
+    * [Homebrew](https://brew.sh/)
+    * [MacPorts](https://www.macports.org/)
+
+Linuxilla kullakin distribuutiolla on oma paketinhallintansa ja lisäksi löytyy distribuutiovapaita kuten Snap.
+
+## Vaihe 1: Scoop
+
+Käytä esim. Scoopia, joka on Windowsille tarkoitettu paketinhallinta.
+
+Asenna Scoop Powershell-komennoilla, jotka löytyvät sivustolta [scoop.sh](https://scoop.sh/):
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+```
+
+
+## Vaihe 2: Terraform
+
+Voit sulkea PowerShellin ja siirtyä sinulle tutumpaan shelliin kuten **Git Bash**, mikäli haluat.
+
+Asenna Terraform Scoopilla:
+
+```bash
+scoop install terraform
+```
+
+
+## Vaihe 3: Azure CLI
+
+Asenna Azure CLI Scoopilla:
+
+```bash
+scoop install azure-cli
+```
+
+## Vaihe 4: Kirjaudu Azureen
+
+Navigoi selaimella osoitteeseen [https://portal.azure.com](https://portal.azure.com) ja kirjaudu Azureen.
+
+
+## Vaihe 5: Kirjaudu Azure CLI:llä
+
+Kirjaudu Azureen komennolla:
+
+```bash
+az login
+```
+
+Tästä aukeaa selainikkuna, jossa kirjaudut Azureen. Kirjaudu sisään ja palaa takaisin shelliin.
+
+Voit tarkistaa kirjautumisen komennolla:
+
+```bash
+az account show
+```
+
+</details>
+
 1. Container Registryn pystytys: 
 
 ````
