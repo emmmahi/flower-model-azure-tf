@@ -133,8 +133,6 @@ terraform apply
 **tf/container_registry**
 * luo Azure recource groupin ja azure container registryn
     * rg-emma-olearn-acr
-    * cremmaolearn
-        * = "cr${var.identifier}${var.course_short_name}"
 
 ![alt text](./images/azure_view.png)
 
